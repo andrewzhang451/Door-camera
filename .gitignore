@@ -1,0 +1,25 @@
+# Python
+__pycache__/
+*.pyc
+
+# Virtual environments
+venv/
+.env/
+
+# MacOS
+.DS_Store
+
+# Logs
+logs/
+*.log
+
+# Images / outputs
+snapshots/
+*.png
+*.jpg
+
+# VS Code
+.vscode/
+
+# Misc
+*.swp
