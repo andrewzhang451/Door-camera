@@ -11,6 +11,7 @@ def fake_motion():
 def fake_distance():
   return round(random.uniform(0.3, 2.0), 2)
 
+
 while True:
   pir = fake_pir()
   motion = fake_motion()
