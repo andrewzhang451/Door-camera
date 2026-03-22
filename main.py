@@ -1,27 +1,27 @@
 from fusion import should_alert
-import random
 import time
 
-def fake_pir():
-  return random.choice([True,False])
-
-def fake_motion():
-  return random.choice([True,False])
-
-def fake_distance():
-  return round(random.uniform(0.3, 2.0), 2)
-
-
+test_data = [
+  {"pir":False, "motion":False, "distance":2.0}, #nobody
+  {"pir":True, "motion":True, "distance":0.9}, #person arrive
+  {"pir":True, "motion":True, "distance":0.5}, #still there
+  {"pir":True, "motion":True, "distance":0.3}, #still there
+  {"pir":False, "motion":False, "distance":2.0} #left
+]
+  
 while True:
-  pir = fake_pir()
-  motion = fake_motion()
-  distance = fake_distance()
+  for reading in test_data:
+    pir = reading["pir"]
+    motion = reading["motion"]
+    distance = reading["distance"]
+    
+    alert = should_alert(distance,motion,pir)
+    
+    print(f"PIR: {pir} | Motion: {motion} | Distance: {distance}m")
   
-  alert = should_alert(distance,motion,pir)
+    if alert:
+      print("alert is triggered")
   
-  print(f"PIR: {pir} | Motion: {motion} | Distance: {distance}m")
-  
-  if alert:
-    print("alert is triggered")
-  
-  time.sleep(1)
+    time.sleep(1)
+
+  print("\n--- Loop Restart ---\n")
