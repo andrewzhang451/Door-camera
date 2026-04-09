@@ -28,6 +28,8 @@ def detection_motion(prev_frame, curr_frame):
   #threshold converts difference image above into "motion or no motion" pixels.
   _, thresh = cv2.threshold(difference, 20,255, cv2.THRESH_BINARY) # "_" means we ignore the first returned value. (threshold used)
   
+  thresh = cv2.medianBlur(thresh, 5)
+  
   #count how many pixels changed
   changed_pixels = count_changed_pixels(thresh)
   
@@ -43,12 +45,17 @@ def detection_motion(prev_frame, curr_frame):
 #   pass
 
 
+######################################################################
 
 #start camera
 cap = cv2.VideoCapture(0)
 
+# this will hold previous frame. 
 ret, prev_frame = cap.read()
-
+motion_streak = 0
+required_motion_frames = 5
+previous_state = False
+  
 while True:
     ret, curr_frame = cap.read()
     
@@ -58,9 +65,20 @@ while True:
     motion = detection_motion(prev_frame, curr_frame)
     
     if motion:
-      print("Motion detected!!")
-    else: 
-      print("no motion")
+      motion_streak += 1
+    else:
+      motion_streak = 0
+    
+    #holds booelan value
+    current_state = motion_streak >= required_motion_frames
+    
+    if current_state != previous_state:
+      if current_state:
+        print("Motion detected!!")
+      else: 
+        print("no motion")
+      
+    previous_state = current_state
       
     prev_frame = curr_frame
     
@@ -70,10 +88,3 @@ while True:
 
 cap.release()
 cv2.destroyAllWindows()
-
-
-
-#loop: 
-  #-get frame
-  #-call detection_motion()
-  #-print result
