@@ -1,4 +1,3 @@
-#import module
 import cv2
 import numpy
 
@@ -45,7 +44,7 @@ def detection_motion(prev_frame, curr_frame):
 #   pass
 
 
-######################################################################
+######################################################################=====RUN SCRIPT====######################################################################
 
 #start camera
 cap = cv2.VideoCapture(0)
@@ -79,7 +78,10 @@ while True:
         print("no motion")
       
     previous_state = current_state
-      
+    
+    #this will use camera live feed 
+    # cv2.imshow("Threshold", thresh)
+    
     prev_frame = curr_frame
     
     #press 'g; to quit
