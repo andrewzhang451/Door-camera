@@ -1,6 +1,7 @@
 import cv2
 import numpy
-
+import time
+from fusion import should_alert
 
 #count how many pixels changed
 def count_changed_pixels (thresh):
@@ -33,12 +34,12 @@ def detection_motion(prev_frame, curr_frame):
   changed_pixels = count_changed_pixels(thresh)
   
   #keep only strong changes and store it in a variable (white = change, black = unchange)
-  motion_pixel_threshold = 12000 #might change later based on testing
+  motion_pixel_threshold = 30000 #might change later based on testing
   
   if changed_pixels > motion_pixel_threshold:
-    return True 
+    return True, thresh
     
-  return False
+  return False, thresh
 
 # def is_motion_strong_enough(changed_pixels:int, motion_pixel_threshold:int):
 #   pass
@@ -48,6 +49,7 @@ def detection_motion(prev_frame, curr_frame):
 
 #start camera
 cap = cv2.VideoCapture(0)
+time.sleep(2) #delay start input for 2 seconds
 
 # this will hold previous frame. 
 ret, prev_frame = cap.read()
@@ -61,7 +63,7 @@ while True:
     if not ret:
       break
     
-    motion = detection_motion(prev_frame, curr_frame)
+    motion,thresh = detection_motion(prev_frame, curr_frame)
     
     if motion:
       motion_streak += 1
@@ -71,6 +73,10 @@ while True:
     #holds booelan value
     current_state = motion_streak >= required_motion_frames
     
+    # fake val for pir for now
+    pir = current_state
+    distance = 0.5 if current_state else 2.0
+    
     if current_state != previous_state:
       if current_state:
         print("Motion detected!!")
@@ -79,13 +85,19 @@ while True:
       
     previous_state = current_state
     
-    #this will use camera live feed 
-    # cv2.imshow("Threshold", thresh)
+    # control (distance) and detect movement via (motion camera) and (heat sensor); sensor fusion*
+    alert = should_alert(distance, current_state, pir)
+    
+    if alert:
+      print("alert is triggered")
+    
+    cv2.imshow("Live Camera", curr_frame)
+    cv2.imshow("Threshold", thresh)
     
     prev_frame = curr_frame
     
     #press 'g; to quit
-    if cv2.waitKey(1) & 0xFF == ord('q'):
+    if cv2.waitKey(1) & 0xFF == ord('g'):
       break
 
 cap.release()

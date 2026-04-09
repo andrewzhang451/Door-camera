@@ -11,7 +11,7 @@ def should_alert(distance_m: float, motion: bool, pir: bool) -> bool:
   
   now = time.time() #current time in seconds
   
-  if pir and motion and distance_m < DISTANCE_THRESHOLD: #if pir and motion is true, and distance_m is less than Distance_threshhold
+  if pir and motion and (distance_m < DISTANCE_THRESHOLD): #if pir and motion is true, and distance_m is less than Distance_threshhold
     if now - last_alert_time > COOLDOWN:
       last_alert_time = now
       return True
